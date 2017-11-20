@@ -14,10 +14,10 @@
         <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
           <!--导航菜单-->
           <el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleselect" :router="true" v-show="!collapsed">
-            <template v-for="(item,index) in $router.options.routes" v-if="!item.hide">
+            <template v-for="(item,index) in $router.options.routes" v-if="item.visible">
               <el-submenu :key="item.name" :index="index+''" v-if="!item.leaf">
-                <template slot="title"><i :class="item.iconCls"></i>{{item.meta.title}}</template>
-                <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="!child.hidden" >{{ child.meta? child.meta.title : child.name}}</el-menu-item>
+                <template slot="title"><i :class="item.iconCls"></i>{{item.meta? item.meta.title:item.name}}</template>
+                <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path" v-if="child.visible" >{{ child.meta? child.meta.title : child.name}}</el-menu-item>
               </el-submenu>
               <el-menu-item :key="item.name" v-if="item.leaf&&item.children.length>0" :index="item.children[0].path" ><i :class="item.iconCls"></i>{{item.children[0].meta?item.children[0].meta.title: child.name}}</el-menu-item>
             </template>
@@ -87,6 +87,8 @@ export default {
   border-color: rgba(238, 241, 146, 0.3);
   border-right-width: 1px;
   border-right-style: solid;
+
+  border:none;
 }
 .logo img {
   width: 40px;
