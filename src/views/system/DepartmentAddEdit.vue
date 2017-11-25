@@ -47,38 +47,51 @@ export default {
   },
   methods: {
     getDepartments: function() {
-      api.getDepartments({ levels: "0,1" }).then(res => {
-        if (res.status) {
-          let departments = res.data.departments;
-          for (var i = 0, j = departments.length; i < j; i++) {
-            if (departments[i].level != 0) continue;
-            let item = {
-              value: departments[i].id,
-              label: departments[i].name
-            };
-            for (var m = 0, n = departments.length; m < n; m++) {
-              if (
-                departments[m].level != 1 ||
-                departments[m].parent_id != departments[i].id
-              )
-                continue;
-              if (
-                typeof item.children === "undefined" ||
-                item.children.length === 0
-              ) {
-                item.children = [];
+      
+      let that = this;   
+      api
+        .getDepartments({ levels: "0,1" })
+        .then(res => {
+          if (res.status) {
+            let departments = res.data.departments;
+            for (var i = 0, j = departments.length; i < j; i++) {
+              if (departments[i].level != 0) continue;
+              let item = {
+                value: departments[i].id,
+                label: departments[i].name
+              };
+              for (var m = 0, n = departments.length; m < n; m++) {
+                if (
+                  departments[m].level != 1 ||
+                  departments[m].parent_id != departments[i].id
+                )
+                  continue;
+                if (
+                  typeof item.children === "undefined" ||
+                  item.children.length === 0
+                ) {
+                  item.children = [];
+                }
+                item.children.push({
+                  value: departments[m].id,
+                  label: departments[m].name
+                });
               }
-              item.children.push({
-                value: departments[m].id,
-                label: departments[m].name
-              });
+              this.departments.push(item);
             }
-            this.departments.push(item);
           }
-        }
-      });
+        })
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     loadData: function() {
+      
+      let that = this;   
       api
         .getDepartmentInfo(this.departmentId)
         .then(res => {
@@ -86,9 +99,17 @@ export default {
             this.info = res.data;
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     saveData: function() {
+      
+      let that = this;   
       let pre = null;
       if (
         typeof this.departmentId === "undefined" ||
@@ -101,26 +122,33 @@ export default {
           name: this.info.name,
           parent_id: 0
         };
-        if(this.info.parent_ids.length == 2){
+        if (this.info.parent_ids.length == 2) {
           data.parent_id = this.info.parent_ids[1];
-        }
-        else if(this.info.parent_ids.length == 1){
+        } else if (this.info.parent_ids.length == 1) {
           data.parent_id = this.info.parent_ids[0];
         }
         pre = api.updateDepartment(data);
       }
-      pre.then(res => {
-        if (res.status) {
-          this.$emit("saveHandle");
-        } else {
-          let msg = "";
-          if (typeof res.message !== "undefined" && res.message.length > 0) {
-            this.$message.error(res.message);
+      pre
+        .then(res => {
+          if (res.status) {
+            this.$emit("saveHandle");
           } else {
-            this.$message.error("发生错误，数据保存失败");
+            let msg = "";
+            if (typeof res.message !== "undefined" && res.message.length > 0) {
+              this.$message.error(res.message);
+            } else {
+              this.$message.error("发生错误，数据保存失败");
+            }
           }
-        }
-      });
+        })
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     resetData: function() {
       this.info.id = 0;

@@ -77,17 +77,29 @@ export default {
   },
   methods: {
     getDepartments: function() {
+      
+      let that = this;   
       var paras = {
         key_word: this.filters.key_word
       };
-      api.getDepartments(paras).then(res => {
+      api.getDepartments(paras)
+      .then(res => {
         if (res && res.status) {
           this.total = res.data.total;
           this.departments = res.data.departments;
         }
-      });
+      })
+      .catch(err=>{
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     deleteClick: function(id) {
+      
+      let that = this;   
       api
         .deleteDepartment(id)
         .then(res => {
@@ -103,7 +115,13 @@ export default {
             }
           }
         })
-        .catch(err => console.error(err));
+        .catch(err =>{
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     queryClick: function() {
       this.getDepartments();

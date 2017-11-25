@@ -115,39 +115,47 @@ export default {
   },
   methods: {
     getDepartments: function() {
-      api.getDepartments().then(res => {
-        if (res.status) {
-          let departments = res.data.departments;
-          for (var i = 0, j = departments.length; i < j; i++) {
-            if (departments[i].level != 0) continue;
-            let item = {
-              value: departments[i].id,
-              label: departments[i].name
-            };
-            for (var m = 0, n = departments.length; m < n; m++) {
-              if (
-                departments[m].level != 1 ||
-                departments[m].parent_id != departments[i].id
-              )
-                continue;
-              if (
-                typeof item.children === "undefined" ||
-                item.children.length === 0
-              ) {
-                item.children = [];
+      api
+        .getDepartments()
+        .then(res => {
+          if (res.status) {
+            let departments = res.data.departments;
+            for (var i = 0, j = departments.length; i < j; i++) {
+              if (departments[i].level != 0) continue;
+              let item = {
+                value: departments[i].id,
+                label: departments[i].name
+              };
+              for (var m = 0, n = departments.length; m < n; m++) {
+                if (
+                  departments[m].level != 1 ||
+                  departments[m].parent_id != departments[i].id
+                )
+                  continue;
+                if (
+                  typeof item.children === "undefined" ||
+                  item.children.length === 0
+                ) {
+                  item.children = [];
+                }
+                item.children.push({
+                  value: departments[m].id,
+                  label: departments[m].name
+                });
               }
-              item.children.push({
-                value: departments[m].id,
-                label: departments[m].name
-              });
+              this.departments.push(item);
             }
-            this.departments.push(item);
           }
-        }
-      });
+        })
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     loadData: function() {
-      debugger
       api
         .getUserInfo(this.userId)
         .then(res => {
@@ -164,7 +172,13 @@ export default {
             this.departmentIds.push(res.data.pid1);
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     saveData: function() {
       let save = () => {
@@ -186,19 +200,30 @@ export default {
           }
           pre = api.updateUser(data);
         }
-        pre.then(res => {
-          if (res.status) {
-            this.resetData();
-            this.$emit("saveHandle");
-          } else {
-            let msg = "";
-            if (typeof res.message !== "undefined" && res.message.length > 0) {
-              this.$message.error(res.message);
+        pre
+          .then(res => {
+            if (res.status) {
+              this.resetData();
+              this.$emit("saveHandle");
             } else {
-              this.$message.error("发生错误，数据保存失败");
+              let msg = "";
+              if (
+                typeof res.message !== "undefined" &&
+                res.message.length > 0
+              ) {
+                this.$message.error(res.message);
+              } else {
+                this.$message.error("发生错误，数据保存失败");
+              }
             }
-          }
-        });
+          })
+          .catch(err => {
+            console.error(err);
+
+            if (err && err.response && err.response.status === 401) {
+              that.$router.push({ path: "/login" });
+            }
+          });
       };
       this.$refs["addEdifForm"].validate(valid => {
         if (valid) {

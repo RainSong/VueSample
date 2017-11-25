@@ -85,7 +85,13 @@ export default {
               this.$message({ message: msg, type: "error" });
             }
           })
-          .catch(err => console.log(err));
+          .catch(err => {
+            console.error(err);
+
+            if (err && err.response && err.response.status === 401) {
+              that.$router.push({ path: "/login" });
+            }
+          });
       };
       //弹出确认对话框
       let confirmSave = () => {

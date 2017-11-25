@@ -4,6 +4,7 @@ import Home from '@/views/Home'
 import Interview from '@/views/employee/Interview'
 import Department from '@/views/system/Department'
 import User from '@/views/system/User'
+import Login from '@/views/Login'
 
 Vue.use(Router)
 export default new Router({
@@ -62,6 +63,12 @@ export default new Router({
           }
         }
       ]
+    },
+    {
+      path:'/login',
+      name:'Login',
+      visible:false,
+      component:Login
     }
   ]
 })

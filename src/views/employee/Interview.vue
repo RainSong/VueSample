@@ -94,31 +94,46 @@ export default {
         key_word: this.filters.key_word,
         date: this.filters.date
       };
-      api.getInterviews(paras).then(res => {
-        if (res && res.status) {
-          this.total = res.data.total;
-          this.interviews = res.data.interviews;
-          console.log(res.data);
-        }
-      });
+      let that = this;
+      api
+        .getInterviews(paras)
+        .then(res => {
+          console.log(res);
+          if (res && res.status) {
+            this.total = res.data.total;
+            this.interviews = res.data.interviews;
+            console.log(res.data);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push("/login");
+          }
+        });
     },
     deleteClick: function(id) {
+      let that = this;
       api
         .deleteInterview(id)
         .then(res => {
-					if(res.status){
-						this.$message({message:'删除成功',type:'sccuess'});
-						this.getInterviews();
-					}
-					else{
-						this.$message({message:'发生错误，删除成功',type:'error'});
-					}
-				})
-        .catch(err => console.error(err));
-		},
-		queryClick:function(){
-			this.getInterviews();
-		},
+          if (res.status) {
+            this.$message({ message: "删除成功", type: "sccuess" });
+            this.getInterviews();
+          } else {
+            this.$message({ message: "发生错误，删除成功", type: "error" });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push("/login");
+          }
+        });
+    },
+    queryClick: function() {
+      this.getInterviews();
+    },
     formatSex: function(row, column) {
       return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "未知";
     },
@@ -131,7 +146,7 @@ export default {
     },
     editClick: function(id) {
       this.dialogVisable = true;
-      this.interviewId = id + '';
+      this.interviewId = id + "";
     },
     canceled: function() {
       this.dialogVisable = false;
@@ -144,10 +159,10 @@ export default {
       this.dialogVisable = true;
     }
   },
-  watch:{
-    dialogVisable:function(val){
-      if(!val){
-        this.interviewId = '';
+  watch: {
+    dialogVisable: function(val) {
+      if (!val) {
+        this.interviewId = "";
       }
     }
   },

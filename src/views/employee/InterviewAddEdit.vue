@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     loadData: function(id) {
+      let that = this;
       api
         .getInterviewInfo(id)
         .then(res => {
@@ -75,10 +76,17 @@ export default {
             this.$message({ message: "发生错误，加载数据失败", type: "error" });
           }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     saveData: function() {
       let pre = null;
+      let that = this;      
       if (
         typeof this.interviewId !== "undefined" &&
         this.interviewId.length > 0
@@ -90,17 +98,20 @@ export default {
       pre
         .then(res => {
           if (res.status) {
-            debugger;
             this.resetData();
             this.$message({ message: "保存成功", type: "success" });
             this.$emit("saveHandle");
           } else {
-            debugger;
             this.$message({ message: "发生错误，保存失败", type: "error" });
-            console.error(res);
           }
         })
-        .catch(res => console.error(res));
+        .catch(res => {
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push({ path: "/login" });
+          }
+        });
     },
     resetData: function() {
       this.info.sex = 1;

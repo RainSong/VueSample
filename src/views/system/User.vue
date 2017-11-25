@@ -114,7 +114,7 @@ import api from "../../api";
 import { dateFormat, dataParse } from "../../common/util";
 
 import UserAddEdit from "../system/UserAddEdit";
-import UserResetPassword from '../system/UserRestPassword';
+import UserResetPassword from "../system/UserRestPassword";
 
 Vue.component(UserAddEdit.name, UserAddEdit);
 Vue.component(UserResetPassword.name, UserResetPassword);
@@ -123,30 +123,30 @@ export default {
   props: {
     id: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   data() {
     return {
       filters: {
-        key_word: '',
-        entry_time_start: '',
-        entry_time_end: '',
-        sex: ''
+        key_word: "",
+        entry_time_start: "",
+        entry_time_end: "",
+        sex: ""
       },
       pagition: {
         pageSize: 10,
         currentPage: 1,
         total: 0
       },
-      sort_column: '',
-      order: '',
+      sort_column: "",
+      order: "",
       users: [],
       selected: [],
       dialogVisable: false,
       passwordDialogVisable: false,
-      userId: '',
-      userName: '',
+      userId: "",
+      userName: "",
       selectedIds: [],
       departments: [],
       departmentIds: []
@@ -154,39 +154,50 @@ export default {
   },
   methods: {
     getDepartments: function() {
-      api.getDepartments().then(res => {
-        if (res.status) {
-          let departments = res.data.departments;
-          for (var i = 0, j = departments.length; i < j; i++) {
-            if (departments[i].level != 0) continue;
-            let item = {
-              value: departments[i].id,
-              label: departments[i].name
-            };
-            for (var m = 0, n = departments.length; m < n; m++) {
-              if (
-                departments[m].level != 1 ||
-                departments[m].parent_id != departments[i].id
-              )
-                continue;
-              if (
-                typeof item.children === 'undefined' ||
-                item.children.length === 0
-              ) {
-                item.children = [];
+      api
+        .getDepartments()
+        .then(res => {
+          if (res.status) {
+            let departments = res.data.departments;
+            for (var i = 0, j = departments.length; i < j; i++) {
+              if (departments[i].level != 0) continue;
+              let item = {
+                value: departments[i].id,
+                label: departments[i].name
+              };
+              for (var m = 0, n = departments.length; m < n; m++) {
+                if (
+                  departments[m].level != 1 ||
+                  departments[m].parent_id != departments[i].id
+                )
+                  continue;
+                if (
+                  typeof item.children === "undefined" ||
+                  item.children.length === 0
+                ) {
+                  item.children = [];
+                }
+                item.children.push({
+                  value: departments[m].id,
+                  label: departments[m].name
+                });
               }
-              item.children.push({
-                value: departments[m].id,
-                label: departments[m].name
-              });
+              this.departments.push(item);
             }
-            this.departments.push(item);
           }
-        }
-      });
+        })
+        .catch(err => {
+          debugger
+          console.error(err);
+
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push("/login");
+          }
+        });
     },
     getUsers: function() {
-      let departmentId = '';
+      let departmentId = "";
+      let that = this;   
       if (this.departmentIds.length === 3) {
         departmentId = this.departmentIds[2];
       } else if (this.departmentIds.length === 2) {
@@ -201,44 +212,60 @@ export default {
         order: this.order,
         department_id: departmentId
       };
-      api.getUsers(paras).then(res => {
-        if (res && res.status) {
-          this.pagition.total = res.total;
-          this.users = res.users;
-          console.log(res);
-        }
-      });
+      api
+        .getUsers(paras)
+        .then(res => {
+          if (res && res.status) {
+            this.pagition.total = res.total;
+            this.users = res.users;
+            console.log(res);
+          }
+        })
+        .then(err => {
+          console.error(err);
+          if (err && err.response && err.response.status === 401) {
+            that.$router.push("/login");
+          }
+        });
     },
     deleteData: function(ids) {
+      
+      let that = this;   
       let deleteSome = () => {
         api
           .deleteUser(ids)
           .then(res => {
             if (res.status) {
-              this.$message({ message: '删除成功', type: 'sccuess' });
+              this.$message({ message: "删除成功", type: "sccuess" });
               this.getUsers();
             } else {
               if (
-                typeof res.message !== 'undefined' &&
+                typeof res.message !== "undefined" &&
                 res.message.length > 0
               ) {
-                this.$message({ message: res.message, type: 'error' });
+                this.$message({ message: res.message, type: "error" });
               } else {
-                this.$message({ message: '发生错误，删除失败', type: 'error' });
+                this.$message({ message: "发生错误，删除失败", type: "error" });
               }
             }
           })
-          .catch(err => console.error(err));
+          .catch(err => {
+            console.error(err);
+
+            if (err && err.response && err.response.status === 401) {
+              that.$router.push({ path: "/login" });
+            }
+          });
       };
-      this.$confirm('确定要删除吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("确定要删除吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
           deleteSome();
         })
-        .catch(err => console.log('cancel delete user'));
+        .catch(err => console.log("cancel delete user"));
     },
     deleteClick: function(id) {
       this.deleteData(id);
@@ -248,38 +275,38 @@ export default {
       this.getUsers();
     },
     formatSex: function(row, column) {
-      return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '';
+      return row.sex == 1 ? "男" : row.sex == 0 ? "女" : "";
     },
     formatDate: function(row, column) {
       let date = row[column.property];
       if (date && date.length) {
-        return dateFormat(dataParse(date, 'yyyy-MM-dd HH-mm-ss'), 'y-M-d');
+        return dateFormat(dataParse(date, "yyyy-MM-dd HH-mm-ss"), "y-M-d");
       }
-      return '';
+      return "";
     },
     formatDepartment: function(row, column) {
-      let deparemtnName = '';
+      let deparemtnName = "";
       if (
-        typeof row.department3 !== 'undefined' &&
+        typeof row.department3 !== "undefined" &&
         row.department3 !== null &&
         row.department3.length > 0
       ) {
         deparemtnName += row.department3;
       }
       if (
-        typeof row.department2 !== 'undefined' &&
+        typeof row.department2 !== "undefined" &&
         row.department2 !== null &&
         row.department2.length > 0
       ) {
-        if (deparemtnName.length > 0) deparemtnName += '/';
+        if (deparemtnName.length > 0) deparemtnName += "/";
         deparemtnName += row.department2;
       }
       if (
-        typeof row.department1 !== 'undefined' &&
+        typeof row.department1 !== "undefined" &&
         row.department1 !== null &&
         row.department1.length > 0
       ) {
-        if (deparemtnName.length > 0) deparemtnName += '/';
+        if (deparemtnName.length > 0) deparemtnName += "/";
         deparemtnName += row.department1;
       }
       return deparemtnName;
@@ -291,7 +318,7 @@ export default {
     },
     editClick: function(id) {
       this.dialogVisable = true;
-      this.userId = id + '';
+      this.userId = id + "";
     },
     canceled: function() {
       this.dialogVisable = false;
@@ -300,15 +327,15 @@ export default {
       this.dialogVisable = false;
       this.getUsers();
     },
-    resetPasswordCencled:function(){
+    resetPasswordCencled: function() {
       this.passwordDialogVisable = false;
     },
-    resetPasswordSaved:function(){
+    resetPasswordSaved: function() {
       this.passwordDialogVisable = false;
     },
     addClick: function() {
       this.dialogVisable = true;
-      this.userId = '';
+      this.userId = "";
     },
     selectionChange: function(val) {
       this.selectedIds = [];
@@ -320,20 +347,20 @@ export default {
     deleteSomeClick: function() {
       if (this.selectedIds.length === 0) {
         this.$message({
-          message: '请选择要删除的数据',
-          type: 'warning'
+          message: "请选择要删除的数据",
+          type: "warning"
         });
         return;
       }
-      let ids = this.selectedIds.join(',');
+      let ids = this.selectedIds.join(",");
       this.deleteData(ids);
     },
     pageCurrentChange: function(val) {
       this.pagition.currentPage = val;
     },
     resetClick: function(row) {
-      if (typeof row === 'undefined') console.error('null of parameter');
-      this.userId = row.id + '';
+      if (typeof row === "undefined") console.error("null of parameter");
+      this.userId = row.id + "";
       this.userName = row.user_name;
       this.passwordDialogVisable = true;
     }
@@ -341,13 +368,13 @@ export default {
   watch: {
     dialogVisable: function(val) {
       if (!val) {
-        this.userId = '';
+        this.userId = "";
       }
     },
-    passwordDialogVisable:function(val){
-      if(!val){
-        this.userId = '';
-        this.userName = '';
+    passwordDialogVisable: function(val) {
+      if (!val) {
+        this.userId = "";
+        this.userName = "";
       }
     }
   },
