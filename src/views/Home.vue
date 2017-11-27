@@ -65,7 +65,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .container {
   position: absolute;
   top: 0px;

@@ -9,7 +9,7 @@
                 <el-input v-model="info.user_name" ></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-                <el-input v-model="info.password" type="password"></el-input>
+                <el-input v-model="info.password" type="password" ></el-input>
             </el-form-item>
             <el-form-item>
                 <el-checkbox v-model="info.remember">保存用户名</el-checkbox>
@@ -73,7 +73,8 @@ export default {
     resetClick: function() {
       resetData();
     },
-    login: function() {
+    login: function(arg1,arg2) {
+      debugger
       api
         .login({
           user_name: this.info.user_name,

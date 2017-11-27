@@ -154,6 +154,7 @@ export default {
   },
   methods: {
     getDepartments: function() {
+      let that = this;
       api
         .getDepartments()
         .then(res => {
@@ -385,7 +386,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .block {
   text-align: right;
   padding: 10px 10px;
