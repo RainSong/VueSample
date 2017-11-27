@@ -222,7 +222,7 @@ export default {
             console.log(res);
           }
         })
-        .then(err => {
+        .catch(err => {
           console.error(err);
           if (err && err.response && err.response.status === 401) {
             that.$router.push("/login");

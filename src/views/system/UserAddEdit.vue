@@ -156,6 +156,7 @@ export default {
         });
     },
     loadData: function() {
+      let that = this;
       api
         .getUserInfo(this.userId)
         .then(res => {
@@ -181,6 +182,7 @@ export default {
         });
     },
     saveData: function() {
+      let that = this;
       let save = () => {
         let pre = null;
         if (typeof this.userId === "undefined" || this.userId.length == 0) {
