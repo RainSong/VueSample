@@ -145,3 +145,23 @@ export const updateRole = paras => {
 export const deleteRole = ids => {
     return deleteData('/role', { ids });
 }
+
+export const getPermissions = paras => {
+    return getData('/permissions', paras);
+}
+
+export const getPermissionsinfo = id => {
+    return getData('/permissions/' + id);
+}
+
+export const addPermissions = paras => {
+    return postData('/permissions',  paras).then(res => res);
+}
+
+export const updatePermissions = paras => {
+    return patchData('/permissions', paras);
+}
+
+export const deletePermissions = ids => {
+    return deleteData('/permissions', { ids });
+}

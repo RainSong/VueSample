@@ -6,6 +6,7 @@ import Department from '@/views/system/Department'
 import User from '@/views/system/User'
 import Login from '@/views/Login'
 import Role from '@/views/system/Role'
+import Permissions from '@/views/system/Permissions'
 
 Vue.use(Router)
 export default new Router({
@@ -70,6 +71,15 @@ export default new Router({
           component:Role,
           meta:{
             title:'角色管理'
+          }
+        },
+        {
+          path:'/system/permissions',
+          name:'permissions',
+          visible:true,
+          component:Permissions,
+          meta:{
+            title:'权限管理'
           }
         }
       ]
