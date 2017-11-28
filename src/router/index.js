@@ -5,6 +5,7 @@ import Interview from '@/views/employee/Interview'
 import Department from '@/views/system/Department'
 import User from '@/views/system/User'
 import Login from '@/views/Login'
+import Role from '@/views/system/Role'
 
 Vue.use(Router)
 export default new Router({
@@ -60,6 +61,15 @@ export default new Router({
           component:User,
           meta:{
             title:'用户管理'
+          }
+        },
+        {
+          path:'/system/role',
+          name:'role',
+          visible:true,
+          component:Role,
+          meta:{
+            title:'角色管理'
           }
         }
       ]

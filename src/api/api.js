@@ -37,92 +37,111 @@ function getParas(paras) {
 }
 function getData(url, paras) {
     let params = getParas(paras);
-    return instance.get(url, { params: params });
+    return instance.get(url, { params: params }).then(res => res.data);
 }
 
 function postData(url, paras) {
     let params = getParas(paras);
-    return instance.post(url, params, { transformRequest: [transformRequest] });
+    return instance.post(url, params, { transformRequest: [transformRequest] }).then(res => res.data);
 }
 
 function patchData(url, paras) {
     let params = getParas(paras);
-    return instance.patch(url, params, { transformRequest: [transformRequest] });
+    return instance.patch(url, params, { transformRequest: [transformRequest] }).then(res => res.data);
 }
 
 function deleteData(url, paras) {
     let params = getParas(paras);
-    return instance.delete(url, { params: params });
+    return instance.delete(url, { params: params }).then(res => res.data);
 }
 
 export const getInterviews = paras => {
-    debugger
-    return getData('/interview', paras).then(res => res.data);
+    return getData('/interview', paras);
 }
 
 export const addInterview = paras => {
-    return postData('/interview', paras).then(res => res.data);
+    return postData('/interview', paras);
 };
 export const updateInterview = paras => {
-    return patchData('/interview', paras).then(res => res.data);
+    return patchData('/interview', paras);
 }
 
 export const deleteInterview = id => {
-    return deleteData('/interview/' + id).then(res => res.data);
+    return deleteData('/interview/' + id);
 }
 
 export const getInterviewInfo = id => {
-    return getData('/interview/' + id).then(res => res.data);
+    return getData('/interview/' + id);
 }
 
 export const getMenus = () => {
-    return getData('/menu').then(res => res.data);
+    return getData('/menu');
 }
 
 export const getDepartments = paras => {
-    return getData('/department', { params: paras }).then(res => res.data);
+    return getData('/department', paras);
 }
 
 export const getDepartmentInfo = id => {
-    return getData('/department/' + id).then(res => res.data);
+    return getData('/department/' + id);
 }
 
 export const updateDepartment = paras => {
-    return patchData('/department', paras).then(res => res.data);
+    return patchData('/department', paras);
 }
 
 export const addDepartment = paras => {
-    return postData('/department', paras).then(res => res.data);
+    return postData('/department', paras);
 }
 
 export const deleteDepartment = id => {
-    return deleteData('/department/' + id).then(res => res.data);
+    return deleteData('/department/' + id);
 }
 
 export const getUsers = paras => {
-    return getData('/user', { params: paras }).then(res => res.data).catch(err => { debugger; console.log(err); });
+    return getData('/user',  paras);
 }
 
 export const getUserInfo = id => {
-    return getData('/user/' + id).then(res => res.data);
+    return getData('/user/' + id);
 }
 
 export const addUser = params => {
-    return postData('/user', params).then(res => res.data);
+    return postData('/user', params);
 }
 
 export const updateUser = params => {
-    return patchData('/user', params).then(res => res.data);
+    return patchData('/user', params);
 }
 
 export const deleteUser = id => {
-    return deleteData('/user', { params: { ids: id } }).then(res => res.data);
+    return deleteData('/user', { ids: id });
 }
 
 export const resetUserPassword = paras => {
-    return postData('/user/resetpassword', paras).then(res => res.data);
+    return postData('/user/resetpassword', paras);
 }
 
 export const login = paras => {
-    return postData('/auth/login', paras).then(res => res.data);
+    return postData('/auth/login', paras);
+}
+
+export const getRoles = paras => {
+    return getData('/role', paras);
+}
+
+export const getRoleInfo = id => {
+    return getData('/role/' + id);
+}
+
+export const addRole = paras => {
+    return postData('/role',  paras).then(res => res);
+}
+
+export const updateRole = paras => {
+    return patchData('/role', paras);
+}
+
+export const deleteRole = ids => {
+    return deleteData('/role', { ids });
 }
