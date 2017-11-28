@@ -2,36 +2,11 @@
     <section>
         <!--编辑界面-->
 			<el-form :model="info" :rules="rules" label-width="100px" ref="addEdifForm">
-          <el-form-item label="用户名"  prop="user_name">
-              <el-input v-model="info.user_name"></el-input>
-          </el-form-item>
-          <el-form-item v-if="this.userId.length === 0" label="密码"  prop="password">
-              <el-input v-model="info.password" type="password" ></el-input>
-          </el-form-item>
-          <el-form-item v-if="this.userId.length === 0" label="确认密码"  prop="repassword">
-              <el-input v-model="info.repassword" type="password" ></el-input>
-          </el-form-item>
-          <el-form-item label="姓名"  prop="name">
+          <el-form-item label="角色名"  prop="name">
               <el-input v-model="info.name"></el-input>
           </el-form-item>
-          <el-form-item label="性别" prop="sex">
-              <el-radio v-model="info.sex" label="1">男</el-radio>
-              <el-radio v-model="info.sex" label="0">女</el-radio>
-          </el-form-item>
-          <el-form-item label="生日" prop="brithday">
-              <el-date-picker type="date" value-format="yyyy-MM-dd"  v-model="info.brithday"></el-date-picker>
-          </el-form-item>
-          <el-form-item label="电话" prop="phone">
-              <el-input v-model="info.phone"></el-input>
-          </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-              <el-input v-model="info.email"></el-input>
-          </el-form-item>
-          <el-form-item label="所属部门">
-              <el-cascader v-model="departmentIds" :options="departments" change-on-select clearable></el-cascader>
-          </el-form-item>
-          <el-form-item label="入职时间" prop="entry_time">
-              <el-date-picker type="date"  value-format="yyyy-MM-dd" v-model="info.entry_time"></el-date-picker>
+          <el-form-item label="级别"  prop="level">
+              <el-input v-model="info.level"></el-input>
           </el-form-item>
 			  </el-form>
 			<div slot="footer" style=" text-align:right;padding:20px 0 0 0">
@@ -45,57 +20,31 @@
 import api from "../../api/index";
 export default {
   props: {
-    userId: {
+    roleId: {
       type: String,
       default: ""
     }
   },
-  name: "UserAddEdit",
+  name: "RoleAddEdit",
   data: function() {
     return {
-      abc: "",
-      departments: [],
-      departmentIds: [],
       info: {
-        user_name: "",
-        password: "",
-        repassword: "",
         name: "",
-        sex: "1",
-        brithday: "",
-        phone: "",
-        email: "",
-        entry_time: ""
+        level: 0
       },
       rules: {
-        user_name: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
-        name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
-        phone: [{ required: true, message: "电话不能为空", trigger: "blur" }],
-        password: [
+        name: [{ required: true, message: "角色名不能为空", trigger: "blur" }],
+        level: [
           {
             required: true,
             trigger: "blur",
             validator: (rule, value, callback) => {
-              if (this.userId === "" && value === "") {
-                callback(new Error("密码不能为空"));
+              if (this.info.level === "" && value === "") {
+                callback(new Error("角色级别不能为空"));
               }
-              callback();
-            }
-          }
-        ],
-        repassword: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: (rule, value, callback) => {
-              if (this.userId === "") {
-                if (value === "") {
-                  callback(new Error("请再次输入密码"));
-                } else {
-                  if (value !== this.info.password) {
-                    callback(new Error("两次密码输入不一致"));
-                  }
-                }
+              let temp = value + '';
+              if(isNaN(temp) || temp < 0 || (temp+'').indexOf('.') > 0 ){
+                callback(new Error("角色级别必须是正整数"));
               }
               callback();
             }
@@ -105,7 +54,7 @@ export default {
     };
   },
   watch: {
-    userId: function(newVal) {
+    roleId: function(newVal) {
       if (typeof newVal === "undefined" || newVal.length == 0) {
         this.resetData();
       } else {
@@ -114,91 +63,35 @@ export default {
     }
   },
   methods: {
-    getDepartments: function() {
-      api
-        .getDepartments()
-        .then(res => {
-          if (res.status) {
-            let departments = res.data.departments;
-            for (var i = 0, j = departments.length; i < j; i++) {
-              if (departments[i].level != 0) continue;
-              let item = {
-                value: departments[i].id,
-                label: departments[i].name
-              };
-              for (var m = 0, n = departments.length; m < n; m++) {
-                if (
-                  departments[m].level != 1 ||
-                  departments[m].parent_id != departments[i].id
-                )
-                  continue;
-                if (
-                  typeof item.children === "undefined" ||
-                  item.children.length === 0
-                ) {
-                  item.children = [];
-                }
-                item.children.push({
-                  value: departments[m].id,
-                  label: departments[m].name
-                });
-              }
-              this.departments.push(item);
-            }
-          }
-        })
-        .catch(err => {
-          console.error(err);
-
-          if (err && err.response && err.response.status === 401) {
-            that.$router.push({ path: "/login" });
-          }
-        });
-    },
     loadData: function() {
+      let that = this;
       api
-        .getUserInfo(this.userId)
+        .getRoleInfo(this.roleId)
         .then(res => {
           if (res.status) {
-            this.info.user_name = res.data.user_name;
             this.info.name = res.data.name;
-            this.info.sex = res.data.sex + "";
-            this.info.brithday = res.data.brithday;
-            this.info.phone = res.data.phone;
-            this.info.email = res.data.email;
-            this.info.entry_time = res.data.entry_time;
-            this.departmentIds.push(res.data.pid3);
-            this.departmentIds.push(res.data.pid2);
-            this.departmentIds.push(res.data.pid1);
+            this.info.level = res.data.level;
           }
         })
         .catch(err => {
           console.error(err);
-
           if (err && err.response && err.response.status === 401) {
             that.$router.push({ path: "/login" });
           }
         });
     },
     saveData: function() {
+      let that = this;
       let save = () => {
         let pre = null;
-        if (typeof this.userId === "undefined" || this.userId.length == 0) {
-          pre = api.addUser(this.info);
+        if (typeof this.roleId === "undefined" || this.roleId.length == 0) {
+          pre = api.addRole(this.info);
         } else {
           var data = {
-            id: this.userId,
-            ...this.info,
-            department_id: ""
+            id: this.roleId,
+            ...this.info
           };
-          if (this.departmentIds.length == 3) {
-            data.department_id = this.departmentIds[2];
-          } else if (this.departmentIds.length == 2) {
-            data.department_id = this.departmentIds[1];
-          } else if (this.departmentIds.length == 1) {
-            data.department_id = this.departmentIds[0];
-          }
-          pre = api.updateUser(data);
+          pre = api.updateRole(data);
         }
         pre
           .then(res => {
@@ -219,7 +112,6 @@ export default {
           })
           .catch(err => {
             console.error(err);
-
             if (err && err.response && err.response.status === 401) {
               that.$router.push({ path: "/login" });
             }
@@ -236,8 +128,6 @@ export default {
     },
     resetData: function() {
       this.$refs["addEdifForm"].resetFields();
-      this.info.deparemnt_id = [];
-      this.departmentIds = [];
     },
     cancelClick: function() {
       this.resetData();
@@ -248,8 +138,7 @@ export default {
     }
   },
   mounted: function() {
-    this.getDepartments();
-    if (typeof this.userId === "undefined" || this.userId.length == 0) {
+    if (typeof this.roleId === "undefined" || this.roleId.length == 0) {
       this.resetData();
     } else {
       this.loadData();
