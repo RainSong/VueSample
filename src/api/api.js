@@ -99,7 +99,7 @@ export const deleteDepartment = id => {
 }
 
 export const getUsers = paras => {
-    return getData('/user',  paras);
+    return getData('/user', paras);
 }
 
 export const getUserInfo = id => {
@@ -135,7 +135,7 @@ export const getRoleInfo = id => {
 }
 
 export const addRole = paras => {
-    return postData('/role',  paras).then(res => res);
+    return postData('/role', paras).then(res => res);
 }
 
 export const updateRole = paras => {
@@ -155,7 +155,7 @@ export const getPermissionsinfo = id => {
 }
 
 export const addPermissions = paras => {
-    return postData('/permissions',  paras).then(res => res);
+    return postData('/permissions', paras).then(res => res);
 }
 
 export const updatePermissions = paras => {
@@ -165,3 +165,20 @@ export const updatePermissions = paras => {
 export const deletePermissions = ids => {
     return deleteData('/permissions', { ids });
 }
+
+export const getUserRoleIds = userId => {
+    return getData('/user/role/' + userId);
+}
+
+export const updateUserRoles = paras => {
+    return postData('/user/role',  paras );
+}
+
+export const getRolePermissionsIds = roleId => {
+    return getData('/role/permissions/' + roleId);
+}
+
+export const updateRolePermissions = paras => {
+    return postData('/role/permissions', paras);
+}
+

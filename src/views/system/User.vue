@@ -69,12 +69,12 @@
           
 				</el-table-column>
 				
-				<el-table-column label="操作" width="150">
+				<el-table-column label="操作" :min-width="100">
 					<template scope="scope">
 						<el-button size="mini" type="text" @click="editClick(scope.row.id)">编辑</el-button>
-						<el-button size="mini" type="text" @click="resetClick(scope.row)">重置密码</el-button>
 						<el-button size="mini" type="text" @click="deleteClick(scope.row.id)">删除</el-button>
-            
+						<el-button size="mini" type="text" @click="resetClick(scope.row)">重置密码</el-button>
+            <el-button size="mini" type="text" @click="setRoleClick(scope.row.id)">设置角色</el-button>
 					</template>
 				</el-table-column>    
       
@@ -90,18 +90,21 @@
           </el-pagination>
       </div>
 
-      <!--新增修改弹窗-->
-			<el-dialog title="编辑" :visible.sync="dialogVisable" :close-on-click-modal="false" >
+      <!-- 新增修改弹窗--> 
+			<el-dialog title="编辑" :visible.sync="dialogVisable" :close-on-click-modal="false" modal>
 				<UserAddEdit  :userId="userId" v-on:cancelHandle="canceled" v-on:saveHandle="saved">
-
 				</UserAddEdit>
 			</el-dialog>
 
-      <el-dialog title="重置密码" :visible.sync="passwordDialogVisable" :close-on-click-modal="false" >
+      <el-dialog title="重置密码" :visible.sync="passwordDialogVisable" :close-on-click-modal="false" modal>
 				<UserResetPassword  :userId="userId" :userName="userName" v-on:cancelHandle="resetPasswordCencled" v-on:saveHandle="resetPasswordSaved">
-
 				</UserResetPassword>
 			</el-dialog>
+
+      <el-dialog title="设置权限" :visible.sync="roleDialogVisable" width="600px" :close-on-click-modal="false">
+        <UserRoleEdit :roleUserId="roleUserId" v-on:cancelHandle="roleCanceled" v-on:saveHandle="roleSaved">
+        </UserRoleEdit>
+      </el-dialog>
 
     </section>
 </template>
@@ -115,9 +118,11 @@ import { dateFormat, dataParse } from "../../common/util";
 
 import UserAddEdit from "../system/UserAddEdit";
 import UserResetPassword from "../system/UserRestPassword";
+import UserRoleEdit from "../system/UserRoleEdit";
 
 Vue.component(UserAddEdit.name, UserAddEdit);
 Vue.component(UserResetPassword.name, UserResetPassword);
+Vue.component(UserRoleEdit.name, UserRoleEdit);
 
 export default {
   props: {
@@ -149,7 +154,9 @@ export default {
       userName: "",
       selectedIds: [],
       departments: [],
-      departmentIds: []
+      departmentIds: [],
+      roleUserId: "",
+      roleDialogVisable: false
     };
   },
   methods: {
@@ -188,7 +195,7 @@ export default {
           }
         })
         .catch(err => {
-          debugger
+          debugger;
           console.error(err);
 
           if (err && err.response && err.response.status === 401) {
@@ -198,7 +205,7 @@ export default {
     },
     getUsers: function() {
       let departmentId = "";
-      let that = this;   
+      let that = this;
       if (this.departmentIds.length === 3) {
         departmentId = this.departmentIds[2];
       } else if (this.departmentIds.length === 2) {
@@ -230,8 +237,7 @@ export default {
         });
     },
     deleteData: function(ids) {
-      
-      let that = this;   
+      let that = this;
       let deleteSome = () => {
         api
           .deleteUser(ids)
@@ -334,6 +340,12 @@ export default {
     resetPasswordSaved: function() {
       this.passwordDialogVisable = false;
     },
+    roleSaved:function(){
+      this.roleDialogVisable = false;
+    },
+    roleCanceled:function(){
+      this.roleDialogVisable = false;
+    },
     addClick: function() {
       this.dialogVisable = true;
       this.userId = "";
@@ -364,6 +376,10 @@ export default {
       this.userId = row.id + "";
       this.userName = row.user_name;
       this.passwordDialogVisable = true;
+    },
+    setRoleClick: function(id) {
+      this.roleUserId = id + "";
+      this.roleDialogVisable = true;
     }
   },
   watch: {
@@ -376,6 +392,11 @@ export default {
       if (!val) {
         this.userId = "";
         this.userName = "";
+      }
+    },
+    roleDialogVisable:function(val){
+      if(!val){
+        this.roleUserId = "";
       }
     }
   },
