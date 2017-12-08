@@ -36,24 +36,20 @@
 				<el-table-column label="操作" width="150">
 					<template scope="scope">
 						<el-button size="mini" type="text" @click="editClick(scope.row.id)">编辑</el-button>
-						<el-button size="mini" type="text" @click="setPermission(scope.row.id)">设置权限</el-button>
 						<el-button size="mini" type="text" @click="deleteClick(scope.row.id)">删除</el-button>
+						<!-- <el-button size="mini" type="text" @click="setPermissionsClick(scope.row.id)">设置权限</el-button> -->
 					</template>
 				</el-table-column>    
       
       </el-table>
 
-      <!--新增修改弹窗-->
+      <!--新增修改弹窗   -->
 			<el-dialog title="编辑" :visible.sync="dialogVisable" :close-on-click-modal="false" >
 				<RoleAddEdit  :roleId="roleId" v-on:cancelHandle="canceled" v-on:saveHandle="saved">
-
 				</RoleAddEdit>
 			</el-dialog>
-
     </section>
 </template>
-
-
 
 <script>
 import Vue from "vue";
@@ -178,6 +174,9 @@ export default {
     addClick: function() {
       this.dialogVisable = true;
       this.roleId = "";
+    },
+    setPermissionsClick:function(id){
+      this.$router.push('/system/role/permissions')
     },
     selectionChange: function(val) {
       this.selectedIds = [];

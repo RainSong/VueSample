@@ -1,6 +1,6 @@
 <template>
   <section>
-      <el-transfer v-model="selectRoleIds" :button-texts="['取消','选择']" :data="roles"></el-transfer>
+      <el-transfer v-model="selectRoleIds" :titles="['未选择','已选择']" :button-texts="['取消','选择']" :data="roles"></el-transfer>
       <div slot="footer" style=" text-align:right;padding:20px 0 0 0">
 				<el-button v-on:click="cancelClick">取消</el-button>
 				<el-button v-on:click="saveClick" type="primary">提交</el-button>
