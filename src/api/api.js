@@ -74,8 +74,8 @@ export const getInterviewInfo = id => {
     return getData('/interview/' + id);
 }
 
-export const getMenus = () => {
-    return getData('/menu');
+export const getModules = () => {
+    return getData('/module');
 }
 
 export const getDepartments = paras => {
@@ -180,5 +180,13 @@ export const getRolePermissionsIds = roleId => {
 
 export const updateRolePermissions = paras => {
     return postData('/role/permissions', paras);
+}
+
+export const getPermissionsModuleIds = permissionsId => {
+    return getData('/permissions/module/' + permissionsId);
+}
+
+export const updatePermissionModules = paras => {
+    return postData('/permissions/module', paras);
 }
 
