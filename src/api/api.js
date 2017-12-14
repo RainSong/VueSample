@@ -74,8 +74,24 @@ export const getInterviewInfo = id => {
     return getData('/interview/' + id);
 }
 
-export const getModules = () => {
-    return getData('/module');
+export const getModules = paras => {
+    return getData('/module', paras);
+}
+
+export const deleteModule = ids => {
+    return deleteData('/module', { ids: ids });
+}
+
+export const getModuleInfo = id => {
+    return getData('/module/'+id);
+}
+
+export const addModule = paras =>{
+    return postData('/module',paras);
+}
+
+export const updateModule = paras => {
+    return patchData('/module',paras);
 }
 
 export const getDepartments = paras => {
@@ -171,7 +187,7 @@ export const getUserRoleIds = userId => {
 }
 
 export const updateUserRoles = paras => {
-    return postData('/user/role',  paras );
+    return postData('/user/role', paras);
 }
 
 export const getRolePermissionsIds = roleId => {

@@ -7,6 +7,7 @@ import User from '@/views/system/User'
 import Login from '@/views/Login'
 import Role from '@/views/system/Role'
 import Permissions from '@/views/system/Permissions'
+import Module from '@/views/system/Module'
 import RolePermissions from '@/views/system/RolePermissions'
 import PermissionsModule from '@/views/system/PermissionsModule'
 
@@ -82,6 +83,15 @@ export default new Router({
           component:Permissions,
           meta:{
             title:'权限管理'
+          }
+        },
+        {
+          path:'/system/module',
+          name:'module',
+          visible:true,
+          component:Module,
+          meta:{
+            title:'模块管理'
           }
         },
         {
