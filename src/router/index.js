@@ -10,6 +10,7 @@ import Permissions from '@/views/system/Permissions'
 import Module from '@/views/system/Module'
 import RolePermissions from '@/views/system/RolePermissions'
 import PermissionsModule from '@/views/system/PermissionsModule'
+import Attendance from '@/views/attendance/Attendance'
 
 Vue.use(Router)
 export default new Router({
@@ -36,6 +37,26 @@ export default new Router({
           visible: true,
           meta: {
             title: '面试管理'
+          }
+        }
+      ]
+    },
+    {
+      path:'/attendance/attendance',
+      name:'Attendance',
+      visible:true,
+      component:Home,
+      meta:{
+        title:'考勤管理'
+      },
+      children:[
+        {
+          path:'/attendance/attendance',
+          name:'Attendance',
+          visible:true,
+          component:Attendance,
+          meta:{
+            title:'考勤管理'
           }
         }
       ]

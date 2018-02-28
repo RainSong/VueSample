@@ -83,15 +83,15 @@ export const deleteModule = ids => {
 }
 
 export const getModuleInfo = id => {
-    return getData('/module/'+id);
+    return getData('/module/' + id);
 }
 
-export const addModule = paras =>{
-    return postData('/module',paras);
+export const addModule = paras => {
+    return postData('/module', paras);
 }
 
 export const updateModule = paras => {
-    return patchData('/module',paras);
+    return patchData('/module', paras);
 }
 
 export const getDepartments = paras => {
@@ -206,3 +206,22 @@ export const updatePermissionModules = paras => {
     return postData('/permissions/module', paras);
 }
 
+export const getAttendances = paras => {
+    return getData('/attendance', paras);
+}
+
+export const addAttendance = paras => {
+    return postData('/attendance', paras);
+}
+
+export const updateAttendance = paras =>{
+    return patchData('/attendance',paras);
+}
+
+export const getAttendanceInfo = id =>{
+    return getData('/attendance/'+id);
+}
+
+export const deleteAttendance = ids => {
+    return deleteData('/attendance', { ids })
+}

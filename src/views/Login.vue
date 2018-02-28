@@ -74,7 +74,6 @@ export default {
       resetData();
     },
     login: function(arg1,arg2) {
-      debugger
       api
         .login({
           user_name: this.info.user_name,
@@ -83,11 +82,12 @@ export default {
         .then(res => {
           if (res.status) {
             if (this.info.remember) {
-              localStorage.setItem("uid", this.info.user_name);
+              localStorage.setItem("uname", this.info.user_name);
             } else {
-              localStorage.removeItem("uid");
+              localStorage.removeItem("uname");
             }
             localStorage.setItem("token", res.token);
+            localStorage.setItem("uid",res.uid);
             this.$router.go(-1);
           } else {
             this.loginReuslt.success = false;
@@ -96,7 +96,6 @@ export default {
           }
         })
         .catch(err => {
-          debugger;
           this.loginReuslt.success = false;
           this.loginReuslt.title = "登录失败";
           this.loginReuslt.message = "发生错误登录失败，请稍后再试";
@@ -105,9 +104,9 @@ export default {
     }
   },
   mounted: function() {
-    let uid = localStorage.getItem("uid");
-    if (typeof uid !== "undefined" && uid.length > 0) {
-      this.info.user_name = uid;
+    let uname = localStorage.getItem("uname");
+    if (typeof uname !== "undefined" && uname.length > 0) {
+      this.info.user_name = uname;
     }
   }
 };
